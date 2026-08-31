@@ -1,0 +1,5 @@
+# Extra dependencies for running the test suite (tests/) and local
+# development. Not needed to run app.py or the training pipeline itself
+# -- see requirements.txt for that.
+-r requirements.txt
+pytest>=8.0.0
