@@ -1,9 +1,16 @@
 # Core ML stack
 torch>=2.2.0
-transformers>=4.41.0
+# Pinned below 5.0: transformers 5.x has a tokenizer-loading regression for
+# TrOCR/RoBERTa-style tokenizers ("need sentencepiece or tiktoken to convert
+# a slow tokenizer to a fast one" -- this is not actually a missing-package
+# issue, TrOCR's tokenizer never needed sentencepiece; it's a bug in that
+# release line). >=4.46.0 for TrainingArguments' `eval_strategy` argument
+# name (src/train.py), which older 4.x releases only accept as the
+# deprecated `evaluation_strategy`.
+transformers>=4.46.0,<5.0.0
 accelerate>=0.30.0
 datasets>=2.19.0
-sentencepiece>=0.1.99   # required to load TrOCR's tokenizer on newer transformers versions
+sentencepiece>=0.1.99   # some tokenizers need this; harmless to keep either way
 protobuf>=3.20.0        # sentencepiece's serialization dependency
 
 # Metrics
