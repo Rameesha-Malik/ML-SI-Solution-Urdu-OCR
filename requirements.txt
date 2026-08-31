@@ -1,0 +1,24 @@
+# Core ML stack
+torch>=2.2.0
+transformers>=4.41.0
+accelerate>=0.30.0
+datasets>=2.19.0
+
+# Metrics
+jiwer>=3.0.3
+evaluate>=0.4.2
+
+# Data / image processing
+pillow>=10.0.0
+opencv-python-headless>=4.9.0
+numpy>=1.26.0
+pandas>=2.2.0
+arabic-reshaper>=3.0.0   # fallback text shaping when libraqm is unavailable
+python-bidi>=0.4.2       # fallback text shaping when libraqm is unavailable
+
+# Deployment demo
+gradio>=4.31.0
+
+# Week 2 baseline comparison (needs system tesseract-ocr + tesseract-ocr-urd,
+# see scripts/tesseract_baseline.py)
+pytesseract>=0.3.10

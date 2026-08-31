@@ -1,0 +1,23 @@
+Fonts bundled in this folder
+=============================
+
+- NotoNastaliqUrdu.ttf  (Noto Nastaliq Urdu)
+- NotoNaskhArabic.ttf   (Noto Naskh Arabic)
+- NotoSansArabic.ttf    (Noto Sans Arabic)
+
+Source: Google Fonts (https://fonts.google.com), designed by Google as part
+of the Noto font family.
+
+License: SIL Open Font License, Version 1.1 (OFL-1.1)
+https://openfontlicense.org
+
+These fonts are bundled so the synthetic data generator
+(`src/synthetic.py`) works offline / inside Colab without an extra
+download step. They give three visually distinct Urdu writing styles
+(Nastaliq / calligraphic, Naskh / book, Sans / modern-digital) which is
+exactly the "different fonts" variety the Week 1 and Week 3 handouts ask
+for.
+
+You are free to drop in additional Urdu fonts (e.g. Jameel Noori Nastaleeq,
+Alvi Nastaleeq) into this folder — `src/synthetic.py` will pick up every
+`.ttf`/`.otf` file placed here automatically.
