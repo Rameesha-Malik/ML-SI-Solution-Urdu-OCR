@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Training artifacts (large — do not commit; push trained models to the
+# HuggingFace Hub instead, see README > How it works / Live demo)
+models/
+results/
+runs/
+wandb/
+
+# Generated data (regenerate with src/synthetic.py / scripts, or re-collect
+# real photos — do not commit large raw datasets to git)
+data/raw/**/*.png
+data/raw/**/*.jpg
+data/raw/**/*.jpeg
+data/processed/**/*.png
+data/processed/**/*.jpg
+!data/raw/**/.gitkeep
+!data/processed/**/.gitkeep
+data/labels.csv
+data/labels_synthetic.csv
+data/train.csv
+data/test.csv
+
+# Reports (regeneratable via evaluate.py / tesseract_baseline.py)
+reports/
