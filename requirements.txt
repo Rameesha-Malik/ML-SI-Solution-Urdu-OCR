@@ -1,15 +1,38 @@
 # Core ML stack
 torch>=2.2.0
-transformers>=4.41.0
-accelerate>=0.30.0
-datasets>=2.19.0
+# Pinned to an EXACT version, not just a "<5.0.0" range: on Colab, a range
+# constraint was not enough -- `pip install --upgrade -r requirements.txt`
+# still resolved to transformers 5.16.1, which has a tokenizer-loading
+# regression for TrOCR/RoBERTa-style tokenizers ("need sentencepiece or
+# tiktoken to convert a slow tokenizer to a fast one" -- not actually a
+# missing-package issue, TrOCR's tokenizer never needed sentencepiece;
+# it's a bug in that release line). 4.46.3 is a stable release with
+# TrainingArguments' `eval_strategy` argument name (src/train.py), which
+# older 4.x releases only accept as the deprecated `evaluation_strategy`.
+# If you need a newer transformers for an unrelated reason, confirm TrOCR
+# tokenizer loading still works before bumping this.
+transformers==4.46.3
+accelerate>=0.30.0,<1.0.0
+sentencepiece>=0.1.99   # some tokenizers need this; harmless to keep either way
+protobuf>=3.20.0        # sentencepiece's serialization dependency
 
-# Metrics
+# Metrics -- note: this is jiwer directly (src/metrics.py), not HuggingFace's
+# `datasets`/`evaluate` libraries. Neither of those is imported anywhere in
+# this repo (src/train.py builds its own PyTorch Dataset, src/metrics.py
+# computes CER/WER via jiwer directly) -- they were dropped from this file
+# because they pulled in a version conflict (`datasets` wants an older
+# `fsspec` than a reconciled huggingface_hub/gradio pulls in) for zero
+# functional benefit. Add `datasets` back only if you actually use
+# `datasets.Dataset` / `evaluate.load(...)` somewhere.
 jiwer>=3.0.3
-evaluate>=0.4.2
 
 # Data / image processing
-pillow>=10.0.0
+# Pinned to an exact version for the same reason as transformers above:
+# an open-ended ">=10.0.0" let Colab resolve to 12.3.0, whose Python 3.13
+# wheel is broken (ImportError: cannot import name '_Ink' from
+# 'PIL._typing', from inside PIL/ImageText.py). 11.0.0 verified working
+# (including libraqm Urdu/Nastaliq text shaping) in a clean install.
+pillow==11.0.0
 opencv-python-headless>=4.9.0
 numpy>=1.26.0
 pandas>=2.2.0
@@ -17,7 +40,15 @@ arabic-reshaper>=3.0.0   # fallback text shaping when libraqm is unavailable
 python-bidi>=0.4.2       # fallback text shaping when libraqm is unavailable
 
 # Deployment demo
-gradio>=4.31.0
+# Upper bound matters here, not just style: Colab pre-installs a recent
+# gradio (6.26.0 observed) built against a newer huggingface_hub major
+# version than the one transformers==4.46.3 above requires
+# (huggingface_hub<2.0,>=1.x vs <1.0). Left unbounded, `gradio>=4.31.0`
+# alone is still "satisfied" by that pre-installed 6.26.0, so plain pip
+# would leave it in place and it would conflict with huggingface_hub
+# post-install; <6.20 forces pip to actually reconcile it down to a
+# version (verified: 6.17.3) built against the older huggingface_hub line.
+gradio>=4.31.0,<6.20
 
 # Week 2 baseline comparison (needs system tesseract-ocr + tesseract-ocr-urd,
 # see scripts/tesseract_baseline.py)

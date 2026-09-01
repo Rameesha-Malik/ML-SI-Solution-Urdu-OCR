@@ -2,6 +2,8 @@ Urdu OCR Project | Code Saviours SI-26 | Rameesha Malik
 
 # Urdu OCR
 
+[![Tests](https://github.com/Rameesha-Malik/ML-SI-Solution-Urdu-OCR/actions/workflows/tests.yml/badge.svg)](https://github.com/Rameesha-Malik/ML-SI-Solution-Urdu-OCR/actions/workflows/tests.yml)
+
 A fine-tuned TrOCR model that extracts text from images of Urdu — printed
 pages, signage, screenshots, and photographed documents — built end to end
 (data collection, preprocessing, training, evaluation, and deployment)
@@ -26,8 +28,9 @@ during the Code Saviours ML/AI Internship, Batch SI-26.
 5. [Dataset details](#dataset-details)
 6. [Results](#results)
 7. [Why We Need a Better Model (Tesseract gap analysis)](#why-we-need-a-better-model-tesseract-gap-analysis)
-8. [Project structure](#project-structure)
-9. [Credit](#credit)
+8. [Testing](#testing)
+9. [Project structure](#project-structure)
+10. [Credit](#credit)
 
 ---
 
@@ -226,13 +229,35 @@ reports/tesseract_baseline.csv, and compare directly against this
 project's fine-tuned-model numbers above — that comparison is the actual
 evidence for "why we need a better model." ]`
 
+## Testing
+
+The data/preprocessing/dataset logic has an automated test suite (`tests/`,
+46 tests) that runs on every push via GitHub Actions (badge at the top of
+this README) — it doesn't need a GPU or model weights, so it runs in a few
+seconds and catches regressions in the parts of the pipeline that don't
+require training to verify (Unicode normalisation, synthetic rendering
+across all three bundled fonts, the preprocessing pipeline, augmentation,
+and dataset splitting/shape/masking correctness).
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v
+```
+
+`app.py`'s demo also ships with 4 example images (`examples/`, with
+ground truth in `examples/ground_truth.csv`) pre-loaded into the Gradio
+interface, so a visitor to your Space has something to click before
+uploading their own image.
+
 ## Project structure
 
 ```
 .
 ├── app.py                    # Gradio demo (Week 5) — same code path for local, Colab, and HF Spaces
-├── requirements.txt
+├── requirements.txt, requirements-dev.txt, pytest.ini
+├── .github/workflows/tests.yml     # CI: runs tests/ on every push
 ├── assets/fonts/              # Bundled Urdu fonts for synthetic data generation
+├── examples/                  # Sample images + ground_truth.csv for the Gradio demo
 ├── data/
 │   ├── corpus/urdu_sentences.txt   # Curated real Urdu sentences (synthetic data source)
 │   ├── raw/                        # Collected images, organised by source (Week 1)
@@ -248,6 +273,7 @@ evidence for "why we need a better model." ]`
 │   ├── train.py               # Fine-tuning (Week 4)
 │   ├── evaluate.py            # Test-set evaluation + error report
 │   └── infer.py               # Shared inference (used by evaluate.py and app.py)
+├── tests/                     # Automated test suite (see Testing above)
 ├── scripts/tesseract_baseline.py   # Week 2 baseline gap analysis
 ├── notebooks/                 # SI26_Week1..5_*.ipynb — Colab versions of the whole pipeline
 └── docs/ACCURACY_NOTES.md     # Full explanation of every accuracy decision made in this repo

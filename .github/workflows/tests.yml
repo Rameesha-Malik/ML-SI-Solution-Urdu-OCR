@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Syntax check every module
+        run: python -m py_compile src/*.py scripts/*.py app.py
+
+      - name: Validate notebooks
+        run: |
+          pip install --quiet nbformat
+          python -c "
+          import glob, nbformat
+          for path in sorted(glob.glob('notebooks/*.ipynb')):
+              nb = nbformat.read(path, as_version=4)
+              nbformat.validate(nb)
+              print(path, 'OK')
+          "
+
+      - name: Run test suite
+        run: pytest -v
